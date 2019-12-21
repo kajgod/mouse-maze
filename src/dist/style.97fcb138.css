@@ -1,0 +1,88 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,400,900&display=swap");
+@keyframes fade_out {
+  0% {
+    opacity: 1;
+    transform: perspective(500px) translate3d(0);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(200px) translate3d(0, 0, -200px);
+  }
+}
+@keyframes start_the_game {
+  0% {
+    width: 50%;
+    height: 200px;
+  }
+  100% {
+    height: 90vh;
+    width: 90vh;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 17px;
+  width: 100vw;
+  height: 100vh;
+  background-color: #c483a9;
+}
+
+main {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.started .run-game {
+  animation: start_the_game 1s forwards;
+}
+.started #start {
+  animation: fade_out 0.5s forwards;
+}
+
+.run-game {
+  width: 50%;
+  min-width: 550px;
+  height: 200px;
+  margin: auto;
+  border: 4px solid #635980;
+  background-color: #fff;
+  position: relative;
+}
+
+#start {
+  position: relative;
+  padding: 20px;
+  font-weight: 900;
+  font-size: 50px;
+  padding: 10px 30px;
+  height: 90px;
+  width: 500px;
+  text-align: center;
+  top: calc(50% - 45px);
+  margin: auto;
+  display: block;
+  cursor: pointer;
+  background: #635980;
+  border: 0px;
+  border-radius: 20px;
+  color: #fff;
+}
+
+#start:active {
+  opacity: 0.9;
+}
+
+#start:focus {
+  outline: 0;
+}
+
+/*# sourceMappingURL=/style.97fcb138.css.map */

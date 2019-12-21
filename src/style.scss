@@ -1,0 +1,64 @@
+@import "constants.scss";
+@import "animations.scss";
+@import url("https://fonts.googleapis.com/css?family=Roboto:100,400,900&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 17px;
+  width: 100vw;
+  height: 100vh;
+  background-color: $color_rose;
+}
+main {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+}
+.started {
+  .run-game {
+  animation: start_the_game 1s forwards;
+}
+#start {
+  animation: fade_out 0.5s forwards;
+}
+}
+.run-game {
+  width: 50%;
+  min-width: 550px;
+  height: 200px;
+  margin: auto;
+  border: 4px solid $color_purple;
+  background-color: $color_white;
+  position: relative;
+}
+#start {
+  position: relative;
+  padding: 20px;
+  font-weight: 900;
+  font-size: 50px;
+  padding: 10px 30px;
+  height: 90px;
+  width: 500px;
+  text-align: center;
+  top: calc(50% - 45px);
+  margin: auto;
+  display: block;
+  cursor: pointer;
+  background: $color_purple;
+  border: 0px;
+  border-radius: 20px;
+  color: $color_white;
+}
+#start:active {
+  opacity: 0.9;
+}
+#start:focus {
+  outline: 0;
+}
