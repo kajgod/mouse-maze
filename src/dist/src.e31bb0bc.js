@@ -117,15 +117,205 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"index.js":[function(require,module,exports) {
-var main = function main() {
-  var commands = function commands() {};
+})({"simple-reactive-state/config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  name: "Simple reactive state",
+  version: "0.1",
+  objectDepth: 1 << 16
+};
+exports.default = _default;
+},{}],"simple-reactive-state/deep-freeze.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _config = _interopRequireDefault(require("./config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var deepFreeze = function deepFreeze(object, name) {
+  var count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+  var _helpers = helpers(object),
+      basicChecks = _helpers.basicChecks,
+      isFreezableType = _helpers.isFreezableType;
+
+  if (_typeof(object) !== "object" && typeof object !== "function") return object;
+  if (count > _config.default.objectDepth) warning(name);
+  Object.freeze(object);
+  Object.getOwnPropertyNames(object).map(function (prop) {
+    if (basicChecks(prop) && isFreezableType(prop)) {
+      deepFreeze(object[prop], name, ++count);
+    }
+  });
+  return object;
 };
 
-document.getElementById("start").addEventListener("click", function () {
-  document.getElementById("main").classList.add("started");
+function warning(name) {
+  console.warn("You may have a cyclic reference in your object \"".concat(name, "\". ").concat(_config.default.name, " v.").concat(_config.default.version, " only allowes objects with properties up to ").concat(_config.default.objectDepth, " levels of depth to be used as constants."));
+}
+
+function helpers(object) {
+  var basicChecks = function basicChecks(prop) {
+    return !!object[prop] && !Object.isFrozen(object[prop]);
+  };
+
+  var isFreezableType = function isFreezableType(prop) {
+    return _typeof(object[prop]) === "object" || typeof object[prop] === "function";
+  };
+
+  return {
+    basicChecks: basicChecks,
+    isFreezableType: isFreezableType
+  };
+}
+
+var _default = deepFreeze;
+exports.default = _default;
+},{"./config":"simple-reactive-state/config.js"}],"simple-reactive-state/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-},{}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+exports.getVar = exports.setVar = exports.getConst = exports.setConst = exports.default = void 0;
+
+var _deepFreeze = _interopRequireDefault(require("./deep-freeze"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var state = {
+  variables: {},
+  sideeffects: {}
+};
+exports.default = state;
+var _constants = {}; //#region constants
+
+var setConst = function setConst(name, val) {
+  Object.defineProperty(_constants, name, {
+    value: (0, _deepFreeze.default)(val, name),
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
+};
+
+exports.setConst = setConst;
+
+var getConst = function getConst(name) {
+  return _constants[name];
+};
+
+exports.getConst = getConst;
+state.setConst = setConst;
+state.getConst = getConst; //#endregion
+//#region variables
+
+var setVar = function setVar(name, val) {
+  state.variables[name] = val;
+};
+
+exports.setVar = setVar;
+
+var getVar = function getVar(name) {
+  return state.variables[name];
+}; //#endregion
+//#region sideeffects
+//#endregion
+
+
+exports.getVar = getVar;
+},{"./deep-freeze":"simple-reactive-state/deep-freeze.js"}],"config.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var _default = {
+  name: "Mouse maze",
+  version: "0.1",
+  horizontal: 10,
+  vertical: 10
+};
+exports.default = _default;
+},{}],"index.js":[function(require,module,exports) {
+"use strict";
+
+var _simpleReactiveState = _interopRequireDefault(require("./simple-reactive-state"));
+
+var _config = _interopRequireDefault(require("./config"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//#region documentation
+
+/*
+
+1. const map has states:
+0 - nothing
+1 - wall
+2 - cheese
+3 - mouse
+
+*/
+//#endregion
+(function () {
+  //#region load stuff & prepare game to start
+  var startGameListener = function startGameListener() {
+    document.getElementById("start").addEventListener("click", function () {
+      document.getElementById("main").classList.add("started");
+      setTimeout(function () {
+        document.getElementById("run").classList.toggle("hidden");
+        document.getElementById("grid").classList.toggle("hidden");
+      }, 1000);
+    });
+  };
+
+  var addTiles = function addTiles(map) {
+    map.map(function (val, y) {
+      val.map(function (val, x) {
+        var tile = document.createElement("div");
+        tile.setAttribute("id", "c-".concat(x, "-").concat(y));
+        if (val === 1) tile.classList.add("wall");
+        var container = document.getElementById("grid");
+        container.appendChild(tile);
+      });
+    });
+  };
+
+  var createTheGrid = function createTheGrid() {
+    //#region TODO: make it configurable for each game
+    var map = new Array(_config.default.vertical).fill(new Array(_config.default.horizontal)); //set edges
+
+    map = map.map(function (val, key) {
+      return key === 0 || key == map.length - 1 ? val.fill(1) : val.map(function (_, key) {
+        return key === 0 || key == val.length - 1 ? 1 : 0;
+      });
+    });
+    addTiles(map); //#endregion
+  };
+
+  var loadGame = function loadGame() {
+    startGameListener();
+    createTheGrid();
+  }; //#endregion
+
+
+  loadGame();
+})();
+},{"./simple-reactive-state":"simple-reactive-state/index.js","./config":"config.js"}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -153,7 +343,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52066" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63510" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

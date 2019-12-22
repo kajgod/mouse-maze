@@ -14,30 +14,59 @@ body {
   height: 100vh;
   background-color: $color_rose;
 }
+.hidden {
+  display: none !important;
+}
+
+// content classes and nests
 main {
   width: 100vw;
   height: 100vh;
   position: relative;
   display: table-cell;
   vertical-align: middle;
+  .run-game {
+    width: 50%;
+    min-width: 550px;
+    height: 200px;
+    margin: auto;
+    border: 4px solid $color_purple;
+    background-color: $color_white;
+    position: relative;
+  }
+  .game-grid {
+    display: grid;
+    grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+    grid-template-rows: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+    position: relative;
+    border: 4px solid $color_purple;
+    background-color: $color_white;
+    width: 90vh;
+    height: 90vh;
+    margin: auto;
+    div {
+      background: $color_white;
+      border-collapse: collapse;
+      border: 1px solid #eee;
+      opacity: 0;
+      transform: perspective(200px) translate3d(0, 0, -200px);
+      animation: fade_in 0.5s forwards;
+    }
+    .wall {
+      background: $color_brick;
+    }
+  }
 }
 .started {
   .run-game {
-  animation: start_the_game 1s forwards;
+    animation: start_the_game 1s forwards;
+  }
+  #start {
+    animation: fade_out 0.5s forwards;
+  }
 }
-#start {
-  animation: fade_out 0.5s forwards;
-}
-}
-.run-game {
-  width: 50%;
-  min-width: 550px;
-  height: 200px;
-  margin: auto;
-  border: 4px solid $color_purple;
-  background-color: $color_white;
-  position: relative;
-}
+
+// IDs
 #start {
   position: relative;
   padding: 20px;
